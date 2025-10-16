@@ -1,0 +1,73 @@
+services:
+  redis:
+    image: redis:latest
+    container_name: redis_microservices
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+#    restart: always
+    networks:
+      - microservices-network
+  kafka:
+    image: confluentinc/cp-kafka:7.4.4
+    container_name: kafka_microservices
+    ports:
+      - "9092:9092"
+    environment:
+        KAFKA_BROKER_ID: 1
+        KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+        KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+        KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+    networks:
+      - microservices-network
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.4
+    container_name: zookeeper_microservices
+    ports:
+      - "2181:2181"
+    environment:
+        ZOOKEEPER_CLIENT_PORT: 2181
+        ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - microservices-network
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.2
+    container_name: keycloak
+    command: start-dev
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: root
+      KC_DB_PASSWORD: root
+      KC_DB_DATABASE: keycloak
+    depends_on:
+      - postgres
+    networks:
+      - microservices-network
+  postgres:
+    image: postgres:16
+    container_name: postgres_microservices
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: main
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+
+volumes:
+  postgres_data:
+
+networks:
+  microservices-network:
+    driver: bridge
