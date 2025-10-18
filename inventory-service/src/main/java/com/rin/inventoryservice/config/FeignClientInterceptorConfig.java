@@ -1,7 +1,6 @@
-package com.rin.orderservice.config;
+package com.rin.inventoryservice.config;
 
 import feign.RequestInterceptor;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;

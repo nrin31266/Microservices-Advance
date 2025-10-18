@@ -17,4 +17,8 @@ public class Order {
     private Long userId;
     private String product;
     private Double price;
+    private int quantity;
+    private String productId;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 }

@@ -35,7 +35,7 @@ services:
       - microservices-network
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.2
-    container_name: keycloak
+    container_name: keycloak_microservices
     command: start-dev
     ports:
       - "8080:8080"
@@ -64,9 +64,48 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - microservices-network
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus_microservices
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+    networks:
+      - microservices-network
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana_microservices
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    restart: unless-stopped
+    networks:
+      - microservices-network
+  mongo:
+    image: mongo:7.0
+    container_name: mongo_microservices
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: main
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - microservices-network
+
 
 volumes:
   postgres_data:
+  grafana_data:
+  mongo_data:
 
 networks:
   microservices-network:

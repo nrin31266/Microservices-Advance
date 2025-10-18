@@ -2,11 +2,13 @@ package com.rin.orderservice.service;
 
 
 import com.rin.orderservice.entity.Order;
-import com.rin.orderservice.event.OrderPlacedEvent;
+import com.rin.orderservice.entity.OrderStatus;
+import com.rin.orderservice.event.OrderCompletedEvent;
+import com.rin.orderservice.event.OrderCreatedEvent;
+import com.rin.orderservice.producer.OrderEventProducer;
 import com.rin.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 
@@ -16,21 +18,44 @@ import org.springframework.stereotype.Service;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    OrderEventProducer orderEventProducer;
 
     public Order createOrder(Order order) {
+        // Đặt trạng thái ban đầu
+        order.setStatus(OrderStatus.PENDING);
         Order saved = orderRepository.save(order);
 
-        // Gửi event Kafka
-        OrderPlacedEvent event = OrderPlacedEvent.builder()
+        // Tạo event
+        OrderCreatedEvent event = OrderCreatedEvent.builder()
                 .orderId(saved.getId())
                 .userId(saved.getUserId())
+                .productId(saved.getProductId())
+                .quantity(saved.getQuantity())
                 .total(saved.getTotal())
                 .build();
 
-        kafkaTemplate.send("order-topic", event);
-        System.out.println("📤 Đã gửi Kafka event: " + event);
+        // Gửi qua producer
+        orderEventProducer.publishOrderCreatedEvent(event);
 
         return saved;
+    }
+
+    public void updateOrderStatus(Long orderId, OrderStatus status) {
+        orderRepository.findById(orderId).ifPresent(order -> {
+            order.setStatus(status);
+            Order updated = orderRepository.save(order);
+            System.out.println("✅ Đã cập nhật trạng thái đơn hàng: " + status);
+
+            // Nếu Payment xong thì phát event
+            if (status == OrderStatus.COMPLETED) {
+                OrderCompletedEvent event = new OrderCompletedEvent(
+                        updated.getId(),
+                        updated.getUserId(),
+                        status.name()
+                );
+                orderEventProducer.publishOrderCompletedEvent(event);
+            }
+
+        });
     }
 }

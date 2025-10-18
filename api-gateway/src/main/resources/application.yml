@@ -28,6 +28,11 @@ spring:
           uri: lb://order-service
           predicates:
             - Path=/api/orders/**
+        - id: inventory-service
+#          uri: http://localhost:8084
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/inventory/**
 
 eureka:
   client:
