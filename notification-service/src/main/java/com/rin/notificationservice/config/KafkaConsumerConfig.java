@@ -1,7 +1,6 @@
 package com.rin.notificationservice.config;
 
 
-import com.rin.notificationservice.event.OrderCancelledEvent;
 import com.rin.notificationservice.event.OrderCompletedEvent;
 import com.rin.notificationservice.event.OrderPlacedEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -62,24 +61,6 @@ public class KafkaConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String, OrderCompletedEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(orderCompletedConsumerFactory());
-        return factory;
-    }
-
-    @Bean
-    public ConsumerFactory<String, OrderCancelledEvent> orderCancelledConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(
-                baseProps("notification-service-order-cancelled"),
-                new StringDeserializer(),
-                new JsonDeserializer<>(OrderCancelledEvent.class, false)
-        );
-    }
-
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OrderCancelledEvent> orderCancelledKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, OrderCancelledEvent> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(orderCancelledConsumerFactory());
         return factory;
     }
 }

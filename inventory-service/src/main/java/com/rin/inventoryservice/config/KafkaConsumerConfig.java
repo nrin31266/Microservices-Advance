@@ -1,6 +1,5 @@
 package com.rin.inventoryservice.config;
 
-import com.rin.inventoryservice.event.consumer.OrderCancelledEvent;
 import com.rin.inventoryservice.event.consumer.OrderCreatedEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -47,24 +46,6 @@ public class KafkaConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String, OrderCreatedEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(orderCreatedConsumerFactory());
-        return factory;
-    }
-
-    @Bean
-    public ConsumerFactory<String, OrderCancelledEvent> orderCancelledConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(
-                baseProps("inventory-service-order-cancelled"),
-                new StringDeserializer(),
-                new JsonDeserializer<>(OrderCancelledEvent.class, false)
-        );
-    }
-
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OrderCancelledEvent> orderCancelledKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, OrderCancelledEvent> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(orderCancelledConsumerFactory());
         return factory;
     }
 

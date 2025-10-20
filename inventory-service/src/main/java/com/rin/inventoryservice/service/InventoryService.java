@@ -49,11 +49,4 @@ public class InventoryService {
         inventory.setQuantity(inventory.getQuantity() - quantity);
         inventoryRepository.save(inventory);
     }
-
-    public void restoreInventory(String productId, int quantity) {
-        Inventory inventory = inventoryRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy inventory với productId: " + productId));
-        inventory.setQuantity(inventory.getQuantity() + quantity);
-        inventoryRepository.save(inventory);
-    }
 }

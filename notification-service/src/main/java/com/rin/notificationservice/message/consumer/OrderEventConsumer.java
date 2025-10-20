@@ -1,6 +1,5 @@
 package com.rin.notificationservice.message.consumer;
 
-import com.rin.notificationservice.event.OrderCancelledEvent;
 import com.rin.notificationservice.event.OrderCompletedEvent;
 import com.rin.notificationservice.event.OrderPlacedEvent;
 import com.rin.notificationservice.service.EmailService;
@@ -35,18 +34,6 @@ public class OrderEventConsumer {
                 + " trạng thái: "
                 + event.getStatus());
 
-    }
-    @KafkaListener(
-            topics = "orders_cancelled",
-            groupId = "notification-service-order-cancelled",
-            containerFactory = "orderCancelledKafkaListenerContainerFactory"
-    )
-    public void handleOrderCancelled(OrderCancelledEvent event) {
-        System.out.println("🔔 Gửi thông báo cho user "
-                + event.getUserId()
-                + " về đơn hàng "
-                + event.getOrderId()
-                + " đã bị hủy.");
     }
 
 }
