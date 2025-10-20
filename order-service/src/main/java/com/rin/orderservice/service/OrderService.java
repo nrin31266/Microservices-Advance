@@ -3,9 +3,10 @@ package com.rin.orderservice.service;
 
 import com.rin.orderservice.entity.Order;
 import com.rin.orderservice.entity.OrderStatus;
+import com.rin.orderservice.event.OrderCancelledEvent;
 import com.rin.orderservice.event.OrderCompletedEvent;
 import com.rin.orderservice.event.OrderCreatedEvent;
-import com.rin.orderservice.producer.OrderEventProducer;
+import com.rin.orderservice.message.producer.OrderEventProducer;
 import com.rin.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -54,6 +55,18 @@ public class OrderService {
                         status.name()
                 );
                 orderEventProducer.publishOrderCompletedEvent(event);
+            }
+
+            // Nếu Cancel thì phát event hủy và release stock
+            if (status == OrderStatus.CANCELLED) {
+                OrderCancelledEvent event = new OrderCancelledEvent(
+                        updated.getId(),
+                        updated.getUserId(),
+                        updated.getProductId(),
+                        updated.getQuantity(),
+                        "Order cancelled (payment failed)"
+                );
+                orderEventProducer.publishOrderCancelledEvent(event);
             }
 
         });

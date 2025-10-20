@@ -1,6 +1,7 @@
 package com.rin.orderservice.config;
 
 import com.rin.orderservice.event.consumer.PaymentCompletedEvent;
+import com.rin.orderservice.event.consumer.PaymentFailedEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +32,8 @@ public class KafkaConsumerConfig {
 
 
     // PaymentCompletedEvent
+    // Cấu hình Consumer cơ bản và Deserializer.
+    // Để biết cách tạo ra Consumer và giải mã (deserialize) message thành đối tượng Java của sự kiện đó
     @Bean
     public ConsumerFactory<String, PaymentCompletedEvent> paymentCompletedConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(
@@ -40,6 +43,8 @@ public class KafkaConsumerConfig {
         );
     }
 
+    // Cấu hình Môi trường lắng nghe/Thực thi
+    // Để quản lý việc lắng nghe và thực thi các hàm @KafkaListener sử dụng cấu hình từ ConsumerFactory đó.
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, PaymentCompletedEvent> paymentCompletedKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, PaymentCompletedEvent> factory =
@@ -66,21 +71,21 @@ public class KafkaConsumerConfig {
 //        return factory;
 //    }
 
-//    // PaymentFailedEvent
-//    @Bean
-//    public ConsumerFactory<String, PaymentFailedEvent> paymentFailedConsumerFactory() {
-//        return new DefaultKafkaConsumerFactory<>(
-//                baseProps("order-service-payment-failed"),
-//                new StringDeserializer(),
-//                new JsonDeserializer<>(PaymentFailedEvent.class, false)
-//        );
-//    }
-//
-//    @Bean
-//    public ConcurrentKafkaListenerContainerFactory<String, PaymentFailedEvent> paymentFailedKafkaListenerContainerFactory() {
-//        ConcurrentKafkaListenerContainerFactory<String, PaymentFailedEvent> factory =
-//                new ConcurrentKafkaListenerContainerFactory<>();
-//        factory.setConsumerFactory(paymentFailedConsumerFactory());
-//        return factory;
-//    }
+    // PaymentFailedEvent
+    @Bean
+    public ConsumerFactory<String, PaymentFailedEvent> paymentFailedConsumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(
+                baseProps("order-service-payment-failed"),
+                new StringDeserializer(),
+                new JsonDeserializer<>(PaymentFailedEvent.class, false)
+        );
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, PaymentFailedEvent> paymentFailedKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, PaymentFailedEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(paymentFailedConsumerFactory());
+        return factory;
+    }
 }

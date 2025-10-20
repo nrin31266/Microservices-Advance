@@ -1,7 +1,8 @@
-package com.rin.orderservice.consumer;
+package com.rin.orderservice.message.consumer;
 
 import com.rin.orderservice.entity.OrderStatus;
 import com.rin.orderservice.event.consumer.PaymentCompletedEvent;
+import com.rin.orderservice.event.consumer.PaymentFailedEvent;
 import com.rin.orderservice.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -31,12 +32,12 @@ public class OrderEventConsumer {
         orderService.updateOrderStatus(event.getOrderId(), OrderStatus.COMPLETED);
     }
 
-//    @KafkaListener(
-//            topics = "payments_failed",
-//            containerFactory = "paymentFailedKafkaListenerContainerFactory"
-//    )
-//    public void handlePaymentFailed(PaymentFailedEvent event) {
-//        System.out.println("📥 Nhận PaymentFailedEvent: " + event);
-//        orderService.updateOrderStatus(event.getOrderId(), OrderStatus.PAYMENT_FAILED);
-//    }
+    @KafkaListener(
+            topics = "payments_failed",
+            containerFactory = "paymentFailedKafkaListenerContainerFactory"
+    )
+    public void handlePaymentFailed(PaymentFailedEvent event) {
+        System.out.println("📥 Nhận PaymentFailedEvent: " + event);
+        orderService.updateOrderStatus(event.getOrderId(), OrderStatus.CANCELLED);
+    }
 }
