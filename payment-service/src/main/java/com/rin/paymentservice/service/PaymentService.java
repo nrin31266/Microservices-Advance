@@ -1,0 +1,34 @@
+package com.rin.paymentservice.service;
+
+import com.rin.paymentservice.event.PaymentCompletedEvent;
+import com.rin.paymentservice.event.consumer.InventoryReservedEvent;
+import com.rin.paymentservice.message.producer.KafkaProducerService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class PaymentService {
+    private final KafkaProducerService kafkaProducerService;
+
+    public void processPayment(InventoryReservedEvent event) {
+        try {
+            // Giả lập logic thanh toán
+            boolean success = Math.random() > 0.2;
+
+            if (success) {
+                PaymentCompletedEvent completed = new PaymentCompletedEvent();
+                completed.setOrderId(event.getOrderId());
+                completed.setPaymentId(UUID.randomUUID().toString());
+                completed.setAmount(100.0); // ví dụ cố định
+
+                kafkaProducerService.sendPaymentCompleted(completed);
+                System.out.println("💳 Payment success -> gửi PaymentCompletedEvent");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

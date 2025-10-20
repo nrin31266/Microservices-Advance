@@ -1,4 +1,4 @@
-package com.rin.orderservice.producer;
+package com.rin.orderservice.message.producer;
 
 import com.rin.orderservice.event.OrderCompletedEvent;
 import lombok.RequiredArgsConstructor;

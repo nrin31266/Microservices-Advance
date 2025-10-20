@@ -5,7 +5,7 @@ import com.rin.orderservice.entity.Order;
 import com.rin.orderservice.entity.OrderStatus;
 import com.rin.orderservice.event.OrderCompletedEvent;
 import com.rin.orderservice.event.OrderCreatedEvent;
-import com.rin.orderservice.producer.OrderEventProducer;
+import com.rin.orderservice.message.producer.OrderEventProducer;
 import com.rin.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

@@ -1,4 +1,4 @@
-package com.rin.orderservice.consumer;
+package com.rin.orderservice.message.consumer;
 
 import com.rin.orderservice.entity.OrderStatus;
 import com.rin.orderservice.event.consumer.PaymentCompletedEvent;

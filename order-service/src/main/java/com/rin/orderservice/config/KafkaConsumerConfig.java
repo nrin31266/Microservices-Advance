@@ -31,6 +31,8 @@ public class KafkaConsumerConfig {
 
 
     // PaymentCompletedEvent
+    // Cấu hình Consumer cơ bản và Deserializer.
+    // Để biết cách tạo ra Consumer và giải mã (deserialize) message thành đối tượng Java của sự kiện đó
     @Bean
     public ConsumerFactory<String, PaymentCompletedEvent> paymentCompletedConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(
@@ -40,6 +42,8 @@ public class KafkaConsumerConfig {
         );
     }
 
+    // Cấu hình Môi trường lắng nghe/Thực thi
+    // Để quản lý việc lắng nghe và thực thi các hàm @KafkaListener sử dụng cấu hình từ ConsumerFactory đó.
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, PaymentCompletedEvent> paymentCompletedKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, PaymentCompletedEvent> factory =
