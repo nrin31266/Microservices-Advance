@@ -1,6 +1,7 @@
 package com.rin.orderservice.message.consumer;
 
 import com.rin.orderservice.entity.OrderStatus;
+import com.rin.orderservice.event.consumer.InventoryFailedEvent;
 import com.rin.orderservice.event.consumer.PaymentCompletedEvent;
 import com.rin.orderservice.event.consumer.PaymentFailedEvent;
 import com.rin.orderservice.service.OrderService;
@@ -14,14 +15,14 @@ public class OrderEventConsumer {
 
     private final OrderService orderService;
 
-//    @KafkaListener(
-//            topics = "inventory_failed",
-//            containerFactory = "inventoryFailedKafkaListenerContainerFactory"
-//    )
-//    public void handleInventoryFailed(InventoryFailedEvent event) {
-//        System.out.println("📥 Nhận InventoryFailedEvent: " + event);
-//        orderService.updateOrderStatus(event.getOrderId(), OrderStatus.INVENTORY_FAILED);
-//    }
+    @KafkaListener(
+            topics = "inventory-failed",
+            containerFactory = "inventoryFailedKafkaListenerContainerFactory"
+    )
+    public void handleInventoryFailed(InventoryFailedEvent event) {
+        System.out.println("📥 Nhận InventoryFailedEvent: " + event);
+        orderService.updateOrderStatus(event.getOrderId(), OrderStatus.CANCELLED, event.getMessage());
+    }
 
     @KafkaListener(
             topics = "payments",
@@ -38,6 +39,6 @@ public class OrderEventConsumer {
     )
     public void handlePaymentFailed(PaymentFailedEvent event) {
         System.out.println("📥 Nhận PaymentFailedEvent: " + event);
-        orderService.updateOrderStatus(event.getOrderId(), OrderStatus.CANCELLED);
+        orderService.updateOrderStatus(event.getOrderId(), OrderStatus.CANCELLED, event.getReason());
     }
 }

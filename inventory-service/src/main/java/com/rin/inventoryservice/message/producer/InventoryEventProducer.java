@@ -1,5 +1,6 @@
 package com.rin.inventoryservice.message.producer;
 
+import com.rin.inventoryservice.event.InventoryFailedEvent;
 import com.rin.inventoryservice.event.InventoryReservedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +31,7 @@ public class InventoryEventProducer {
     }
 
 
-    public void publishInventoryFailed(InventoryReservedEvent event) {
+    public void publishInventoryFailed(InventoryFailedEvent event) {
 
         // Gửi message, sử dụng orderID làm key
         kafkaTemplate.send(TOPIC_FAILED, event.getOrderId().toString(), event)

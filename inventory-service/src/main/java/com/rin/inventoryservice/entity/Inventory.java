@@ -1,18 +1,26 @@
 package com.rin.inventoryservice.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
+@Entity
+@Table(name = "inventories")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document(collection = "inventory")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Inventory {
+
     @Id
-    String productId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_id", nullable = false, unique = true)
+    Long productId;
+
+    @Column(nullable = false)
     int quantity;
+
+    @Column(name = "updated_at")
+    java.time.LocalDateTime updatedAt;
 }

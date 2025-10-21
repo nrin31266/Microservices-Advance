@@ -1,8 +1,10 @@
 package com.rin.inventoryservice.service;
 
 import com.rin.inventoryservice.entity.Inventory;
+import com.rin.inventoryservice.entity.ReservedOrder;
 import com.rin.inventoryservice.message.producer.InventoryEventProducer;
 import com.rin.inventoryservice.repository.InventoryRepository;
+import com.rin.inventoryservice.repository.ReservedOrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.List;
 public class InventoryService {
     InventoryRepository inventoryRepository;
     InventoryEventProducer inventoryEventProducer;
+    ReservedOrderRepository reservedOrderRepository;
 
     // CRUD methods can be added here
     public Inventory findById(String id) {
@@ -22,6 +25,7 @@ public class InventoryService {
                 () -> new RuntimeException("Không tìm thấy inventory với id: " + id)
         );
     }
+
     public List<Inventory> findAll() {
         return inventoryRepository.findAll();
     }
@@ -40,20 +44,15 @@ public class InventoryService {
         return inventoryRepository.save(existingInventory);
     }
 
-    public void reserveInventory(String productId, int quantity) {
-        Inventory inventory = inventoryRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy inventory với productId: " + productId));
-        if (inventory.getQuantity() < quantity) {
-            throw new RuntimeException("Số lượng hàng không đủ để giữ: " + quantity);
-        }
-        inventory.setQuantity(inventory.getQuantity() - quantity);
-        inventoryRepository.save(inventory);
-    }
+//    public void reserveInventory(String productId, int quantity) {
+//        Inventory inventory = inventoryRepository.findById(productId)
+//                .orElseThrow(() -> new RuntimeException("Không tìm thấy inventory với productId: " + productId));
+//        if (inventory.getQuantity() < quantity) {
+//            throw new RuntimeException("Số lượng hàng không đủ để giữ: " + quantity);
+//        }
+//        inventory.setQuantity(inventory.getQuantity() - quantity);
+//        inventoryRepository.save(inventory);
+//    }
 
-    public void restoreInventory(String productId, int quantity) {
-        Inventory inventory = inventoryRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy inventory với productId: " + productId));
-        inventory.setQuantity(inventory.getQuantity() + quantity);
-        inventoryRepository.save(inventory);
-    }
+
 }

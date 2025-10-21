@@ -1,9 +1,18 @@
 spring:
   application:
    name: inventory-service
-  data:
-    mongodb:
-      uri: mongodb://root:root@localhost:27017/inventory-service?authSource=admin
+#  data:
+#    mongodb:
+#      uri: mongodb://root:root@localhost:27017/inventory-service?authSource=admin
+  datasource:
+    url: jdbc:postgresql://localhost:5432/inventory-service
+    driverClassName: org.postgresql.Driver
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update   # hoặc create để tạo mới hoàn toàn
+    show-sql: true
   security:
     oauth2:
       resource-server:

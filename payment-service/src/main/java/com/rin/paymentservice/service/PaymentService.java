@@ -16,9 +16,9 @@ public class PaymentService {
 
     public void processPayment(InventoryReservedEvent event) {
         try {
-            // Giả lập logic thanh toán
-//            boolean success = Math.random() > 0.2;
-            boolean success = false;
+            int randomNum = (int) (Math.random() * 10);
+            boolean success = randomNum < 8; // 80% cơ hội thành công
+//            boolean success = false;
             if (success) {
                 PaymentCompletedEvent completed = new PaymentCompletedEvent();
                 completed.setOrderId(event.getOrderId());

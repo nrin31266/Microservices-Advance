@@ -41,7 +41,7 @@ public class OrderService {
         return saved;
     }
 
-    public void updateOrderStatus(Long orderId, OrderStatus status) {
+    public void updateOrderStatus(Long orderId, OrderStatus status, String reason) {
         orderRepository.findById(orderId).ifPresent(order -> {
             order.setStatus(status);
             Order updated = orderRepository.save(order);
@@ -64,11 +64,15 @@ public class OrderService {
                         updated.getUserId(),
                         updated.getProductId(),
                         updated.getQuantity(),
-                        "Order cancelled (payment failed)"
+                        reason
+
                 );
                 orderEventProducer.publishOrderCancelledEvent(event);
             }
 
         });
+    }
+    public void updateOrderStatus(Long orderId, OrderStatus status) {
+        updateOrderStatus(orderId, status, "Order cancelled unknown reason");
     }
 }
