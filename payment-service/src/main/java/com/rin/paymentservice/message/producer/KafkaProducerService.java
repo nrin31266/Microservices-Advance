@@ -1,6 +1,7 @@
 package com.rin.paymentservice.message.producer;
 
 import com.rin.paymentservice.event.PaymentCompletedEvent;
+import com.rin.paymentservice.event.PaymentFailedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -17,8 +18,8 @@ public class KafkaProducerService {
         kafkaTemplate.send(TOPIC_PAYMENT_COMPLETED, String.valueOf(event.getOrderId()), event);
     }
 
-//    public void sendPaymentFailed(PaymentFailedEvent event) {
-//        kafkaTemplate.send(TOPIC_PAYMENT_FAILED, String.valueOf(event.getOrderId()), event);
-//    }
+    public void sendPaymentFailed(PaymentFailedEvent event) {
+        kafkaTemplate.send(TOPIC_PAYMENT_FAILED, String.valueOf(event.getOrderId()), event);
+    }
 
 }

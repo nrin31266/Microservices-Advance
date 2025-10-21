@@ -1,6 +1,7 @@
 package com.rin.inventoryservice.message.consumer;
 
 import com.rin.inventoryservice.event.InventoryReservedEvent;
+import com.rin.inventoryservice.event.consumer.OrderCancelledEvent;
 import com.rin.inventoryservice.event.consumer.OrderCreatedEvent;
 import com.rin.inventoryservice.message.producer.InventoryEventProducer;
 import com.rin.inventoryservice.service.InventoryService;
@@ -45,5 +46,19 @@ public class InventoryEventConsumer {
                             .build()
             );
         }
+    }
+    @KafkaListener(
+            topics = "orders_cancelled",
+            groupId = "inventory-service-order-cancelled", // groupId chuẩn hóa
+            containerFactory = "orderCancelledKafkaListenerContainerFactory" // Cần cấu hình trong config class
+    )
+    public void handleOrderCancelledEvent(OrderCancelledEvent event) {
+        System.out.println("📥 Nhận OrderCancelledEvent: " + event);
+        // Xử lý sự kiện OrderCancelledEvent ở đây
+        inventoryService.restoreInventory(event.getProductId(),  event.getQuantity());
+        System.out.println("✅ Đã hoàn trả hàng cho đơn hàng: " + event.getOrderId() +
+                ", productId: " + event.getProductId()+
+                ", quantity: " + event.getQuantity()+
+                ", reason: " + event.getReason());
     }
 }

@@ -1,6 +1,7 @@
 package com.rin.paymentservice.service;
 
 import com.rin.paymentservice.event.PaymentCompletedEvent;
+import com.rin.paymentservice.event.PaymentFailedEvent;
 import com.rin.paymentservice.event.consumer.InventoryReservedEvent;
 import com.rin.paymentservice.message.producer.KafkaProducerService;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,8 @@ public class PaymentService {
     public void processPayment(InventoryReservedEvent event) {
         try {
             // Giả lập logic thanh toán
-            boolean success = Math.random() > 0.2;
-
+//            boolean success = Math.random() > 0.2;
+            boolean success = false;
             if (success) {
                 PaymentCompletedEvent completed = new PaymentCompletedEvent();
                 completed.setOrderId(event.getOrderId());
@@ -26,7 +27,14 @@ public class PaymentService {
 
                 kafkaProducerService.sendPaymentCompleted(completed);
                 System.out.println("💳 Payment success -> gửi PaymentCompletedEvent");
+            }else{
+                System.out.println("💳 Payment failed -> gửi PaymentFailedEvent");
+                kafkaProducerService.sendPaymentFailed(PaymentFailedEvent.builder()
+                                .orderId(event.getOrderId())
+                                .reason("Thanh toán không đủ hạn mức.")
+                        .build());
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
