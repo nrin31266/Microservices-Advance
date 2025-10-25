@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ProductCreatedEvent",
+  "type": "object",
+  "properties": {
+    "productId": {"type": "string"},
+    "name": {"type": "string"},
+    "cost": {"type": "number"}
+  },
+  "required": ["productId", "name", "cost"]
+}

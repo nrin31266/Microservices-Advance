@@ -1,12 +1,15 @@
 package com.rin.userservice.controller;
 
 
+import com.rin.common.dto.ApiResponse;
+import com.rin.common.exception.ErrorCode;
 import com.rin.userservice.dto.UserDto;
 import com.rin.userservice.entity.User;
 import com.rin.userservice.repository.UserRepository;
 import com.rin.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +23,7 @@ public class UserController {
 
     private final UserRepository userRepository;
     private  final UserService userService;
-
+    ErrorCode errorCode = ErrorCode.RIN;
     @PostMapping
     @CacheEvict (value = "allUsers", allEntries = true)
     public User createUser(@RequestBody User user) {
@@ -28,8 +31,8 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ApiResponse<List<User>> getAllUsers() {
+        return ApiResponse.success(userService.getAllUsers());
     }
 
 
